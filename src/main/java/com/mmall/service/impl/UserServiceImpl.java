@@ -176,13 +176,23 @@ public class UserServiceImpl implements IUserService {
         return ServerResponse.createByErrorMessage("更新个人信息失败");
     }
 
-    public ServerResponse<User> getInformation(Integer userId){
+    public ServerResponse<User> getInformation(Integer userId) {
         User user = userMapper.selectByPrimaryKey(userId);
-        if(user == null){
+        if (user == null) {
             return ServerResponse.createByErrorMessage("找不到当前用户");
         }
         user.setPassword(org.apache.commons.lang3.StringUtils.EMPTY);
         return ServerResponse.createBySuccess(user);
+    }
 
+    /**
+     * backend
+     */
+
+    public ServerResponse checkAdmin(User user) {
+        if (user != null && user.getRole() == Const.Role.ROLE_ADMIN) {
+            return ServerResponse.createBySuccess();
+        }
+        return ServerResponse.createByError();
     }
 }
