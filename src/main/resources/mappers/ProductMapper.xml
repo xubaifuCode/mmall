@@ -232,7 +232,21 @@
                 AND id = #{productId}
             </if>
         </where>
+    </select>
 
-
+    <select id="selectByNameAndCategoryIds" resultMap="BaseResultMap" parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM mmall_product
+        WHERE status = 1
+        <if test="productName != null">
+            AND name LIKE #{productName}
+        </if>
+        <if test="categoryIdList != null">
+            AND category_id in
+            <foreach collection="categoryIdList" open="(" separator="," close=")" item="item" index="index">
+                #{item}
+            </foreach>
+        </if>
     </select>
 </mapper>
