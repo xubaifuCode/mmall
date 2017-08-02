@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>支付宝扫码付款</title>
+    <link rel="stylesheet" type="text/css" href="../AmazeUI-2.4.2/assets/css/amazeui.css"/>
+    <link href="../AmazeUI-2.4.2/assets/css/admin.css" rel="stylesheet" type="text/css">
+    <link href="../basic/css/demo.css" rel="stylesheet" type="text/css"/>
+
+    <link href="../css/sustyle.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="../basic/js/jquery-1.7.min.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="../js/model.js"></script>
+
+
+</head>
+
+<body>
+
+<!--顶部导航条 -->
+<div class="am-container header vue-user-info">
+    <ul class="message-l">
+        <div class="topMessage">
+            <div v-if="id === -1" class="menu-hd">
+                <a href="login.html" class="h">亲,请登录</a>
+                <a href="register.html">注册</a>
+            </div>
+            <div v-else class="menu-hd">
+                <a href="../person/index.html" target="_top" class="h">欢迎你, {{ username }}</a>
+                <a @click="loginOut" href="#" target="_top">退出</a>
+            </div>
+        </div>
+    </ul>
+    <ul class="message-r">
+        <div class="topMessage my-shangcheng">
+            <div class="menu-hd MyShangcheng"><a href="../person/index.html" target="_top"><i class="am-icon-user am-icon-fw"></i>个人中心</a>
+            </div>
+        </div>
+        <div class="topMessage mini-cart">
+            <div class="menu-hd"><a id="mc-menu-hd" href="#" target="_top"><i
+                    class="am-icon-shopping-cart  am-icon-fw"></i><span><a href="shopcart.html">购物车</a></span><strong
+                    id="J_MiniCartNum"
+                    class="h">0</strong></a>
+            </div>
+        </div>
+    </ul>
+</div>
+
+<!--悬浮搜索框-->
+<div class="nav white">
+    <a href="home.html">
+        <div class="logo"><img src="../images/logo.png"/></div>
+        <div class="logoBig">
+            <li><img src="../images/logobig.png"/></li>
+        </div>
+    </a>
+
+    <div class="search-bar pr">
+        <a name="index_none_header_sysc" href="#"></a>
+        <form action="">
+            <input id="searchInput" v-model="word" name="product_name" type="text" placeholder="搜索"
+                   autocomplete="off">
+            <div @click="toSearch()" id="ai-topsearch" class="am-btn">搜索</div>
+        </form>
+    </div>
+</div>
+
+<div class="clear"></div>
+
+
+<div class="take-delivery">
+    <div class="status">
+        <h2>成功创建订单，打开支付宝扫码付款</h2>
+        <div class="successInfo">
+            <img id="qrCode">
+        </div>
+    </div>
+</div>
+
+
+<div class="footer">
+    <div class="footer-hd">
+        <p>
+            <a href="#">恒望科技</a>
+            <b>|</b>
+            <a href="#">商城首页</a>
+            <b>|</b>
+            <a href="#">支付宝</a>
+            <b>|</b>
+            <a href="#">物流</a>
+        </p>
+    </div>
+    <div class="footer-bd">
+        <p>
+            <a href="#">关于恒望</a>
+            <a href="#">合作伙伴</a>
+            <a href="#">联系我们</a>
+            <a href="#">网站地图</a>
+            <em>© 2015-2025 Hengwang.com 版权所有. 更多模板 <a href="http://www.cssmoban.com/" target="_blank"
+                                                       title="模板之家">模板之家</a> - Collect from <a
+                    href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></em>
+        </p>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var userInfo = new Vue({
+        el: '.vue-user-info',
+        data: {
+            id: -1,
+            username: '',
+            email: '',
+            phone: '',
+            question: '',
+        },
+        created: function () {
+            this.id = -1;
+            this.username = '';
+            this.email = '';
+            this.phone = '';
+            this.question = '';
+            user.getUser(this.getUserCallback);
+        },
+        methods: {
+            getUserCallback: function (result) {
+                if (result.status == 0) {
+                    this.id = result.data.id;
+                    this.username = result.data.username;
+                    this.email = result.data.email;
+                    this.phone = result.data.phone;
+                    this.question = result.data.question;
+                    cart.getCount(this.getCountCallback);
+                } else {
+                    console.log(result);
+                    alert("未登录，请登录");
+                    window.location.href = "login.html";
+                }
+            },
+            loginOut: function () {
+                user.loginOut();
+                window.location.reload();
+            },
+            getCountCallback: function (result) {
+                $("#J_MiniCartNum").text(result.data);
+            }
+        }
+    });
+    var qrUrl = sessionStorage.getItem("qrUrl");
+    var orderNo = sessionStorage.getItem("orderNo");
+    if (typeof qrUrl == "undefined" || typeof orderNo == "undefined") {
+        alert("支付信息已失效,正在为您跳转回首页");
+        window.location.href = "home.html";
+    }
+
+    $('#qrCode').attr("src", qrUrl);
+    function queryStatus() {
+        order.queryStatus(orderNo, queryCallback);
+    }
+    function queryCallback(result) {
+        console.log(result);
+        if (result.data) {
+            alert("付款成功");
+            window.location.href = "success.html";
+        } else {
+            setTimeout("queryStatus()", 3000);
+            console.log(orderNo + "尚未付款");
+        }
+    }
+    var searchBar = new Vue({
+        el: '.search-bar',
+        data: {
+            word: ''
+        },
+        methods: {
+            toSearch: function () {
+                sessionStorage.setItem("productId", undefined);
+                sessionStorage.setItem("productWord", this.word);
+                window.location.href = "search.html";
+            }
+        }
+    });
+    queryStatus();
+</script>
+</body>
+</html>

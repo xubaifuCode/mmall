@@ -343,7 +343,7 @@ public class OrderServiceImpl implements IOrderService {
         // 需保证商户系统端不能重复，建议通过数据库sequence生成，
         String outTradeNo = String.valueOf(order.getOrderNo());
         // (必填) 订单标题，粗略描述用户的支付目的。如“xxx品牌xxx门店当面付扫码消费”
-        String subject = new StringBuilder().append("happymmall扫码支付，订单号:").append(outTradeNo).toString();
+        String subject = new StringBuilder().append("扫码支付，订单号:").append(outTradeNo).toString();
 
         // (必填) 订单总金额，单位为元，不能超过1亿元
         // 如果同时传入了【打折金额】,【不可打折金额】,【订单总金额】三者,则必须满足如下条件:【订单总金额】=【打折金额】+【不可打折金额】

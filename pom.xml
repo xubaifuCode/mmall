@@ -61,6 +61,7 @@
             <version>1.7.3</version>
         </dependency>
 
+        <!--集成mybatis-->
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
@@ -259,7 +260,6 @@
                     </compilerArguments>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>

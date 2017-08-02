@@ -1,0 +1,367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>购物车页面</title>
+
+    <link href="../AmazeUI-2.4.2/assets/css/amazeui.css" rel="stylesheet" type="text/css"/>
+    <link href="../basic/css/demo.css" rel="stylesheet" type="text/css"/>
+    <link href="../css/cartstyle.css" rel="stylesheet" type="text/css"/>
+    <link href="../css/optstyle.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="../js/model.js"></script>
+</head>
+
+<body>
+
+<!--顶部导航条 -->
+<div class="am-container header vue-user-info">
+    <ul class="message-l">
+        <div class="topMessage">
+            <div v-if="id === -1" class="menu-hd">
+                <a href="login.html" class="h">亲,请登录</a>
+                <a href="register.html">注册</a>
+            </div>
+            <div v-else class="menu-hd">
+                <a href="../person/index.html" target="_top" class="h">欢迎你, {{ username }}</a>
+                <a @click="loginOut" href="#" target="_top">退出</a>
+            </div>
+        </div>
+    </ul>
+    <ul class="message-r">
+        <div class="topMessage my-shangcheng">
+            <div class="menu-hd MyShangcheng"><a href="../person/index.html" target="_top"><i
+                    class="am-icon-user am-icon-fw"></i>个人中心</a>
+            </div>
+        </div>
+        <div class="topMessage mini-cart">
+            <div class="menu-hd"><a id="mc-menu-hd" href="#" target="_top"><i
+                    class="am-icon-shopping-cart  am-icon-fw"></i><span><a href="shopcart.html">购物车</a></span><strong
+                    id="J_MiniCartNum"
+                    class="h">0</strong></a>
+            </div>
+        </div>
+    </ul>
+</div>
+
+<!--悬浮搜索框-->
+<div class="nav white">
+    <a href="home.html">
+        <div class="logo"><img src="../images/logo.png"/></div>
+        <div class="logoBig">
+            <li><img src="../images/logobig.png"/></li>
+        </div>
+    </a>
+
+    <div class="search-bar pr">
+        <a name="index_none_header_sysc" href="#"></a>
+        <form action="">
+            <input id="searchInput" v-model="word" name="product_name" type="text" placeholder="搜索"
+                   autocomplete="off">
+            <div @click="toSearch()" id="ai-topsearch" class="am-btn">搜索</div>
+        </form>
+    </div>
+</div>
+
+<div class="clear"></div>
+
+<!--购物车 -->
+<div class="concent">
+    <div id="cartTable">
+        <div class="cart-table-th">
+            <div class="wp">
+                <div class="th th-chk">
+                    <div id="J_SelectAll1" class="select-all J_SelectAll">
+
+                    </div>
+                </div>
+                <div class="th th-item">
+                    <div class="td-inner">商品信息</div>
+                </div>
+                <div class="th th-price">
+                    <div class="td-inner">单价</div>
+                </div>
+                <div class="th th-amount">
+                    <div class="td-inner">数量</div>
+                </div>
+                <div class="th th-sum">
+                    <div class="td-inner">金额</div>
+                </div>
+                <div class="th th-op">
+                    <div class="td-inner">操作</div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+
+        <tr class="item-list">
+            <div class="bundle  bundle-last " v-for="item in list">
+                <div class="clear"></div>
+                <div class="bundle-main">
+                    <ul class="item-content clearfix">
+                        <li class="td td-chk">
+                            <div class="cart-checkbox ">
+                                <input @click="selectOrUnSelect('J_CheckBox_' + item.productId)" class="check"
+                                       v-bind:id="'J_CheckBox_' + item.productId" name="items[]"
+                                       v-bind:value="item.productId"
+                                       type="checkbox" v-model="checkedIds">
+                                <label v-bind:for="'J_CheckBox_' + item.productId"></label>
+                            </div>
+                        </li>
+                        <li class="td td-item">
+                            <div class="item-pic">
+                                <a href="#" target="_blank" v-bind:data-title="item.productName"
+                                   class="J_MakePoint" data-point="tbcart.8.12">
+                                    <img style="width: 80px; height: 80px;"
+                                         v-bind:src="imageHost + item.productMainImage"
+                                         class="itempic J_ItemImg"></a>
+                            </div>
+                            <div class="item-info">
+                                <div class="item-basic-info">
+                                    <a href="#" target="_blank" v-bind:title="item.productName"
+                                       class="item-title J_MakePoint" data-point="tbcart.8.11">{{item.productName}}</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="td td-info">
+                            <div class="item-props item-props-can">
+                                <span class="sku-line">颜色：默认</span>
+                                <span class="sku-line">包装：默认</span>
+                                <i class="theme-login am-icon-sort-desc"></i>
+                            </div>
+                        </li>
+                        <li class="td td-price">
+                            <div class="item-price price-promo-promo">
+                                <div class="price-content">
+                                    <div class="price-line">
+                                        <em class="J_Price price-now" tabindex="0">{{item.productPrice}}</em>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="td td-amount">
+                            <div class="amount-wrapper ">
+                                <div class="item-amount ">
+                                    <div class="sl">
+                                        <input class="min am-btn" name="" type="button" value="-"
+                                               @click="updateProductCount(item.productId, item.quantity - 1)"/>
+                                        <input class="text_box" name="" type="text" v-bind:value="item.quantity"
+                                               style="width:30px;"/>
+                                        <input class="add am-btn" name="" type="button" value="+"
+                                               @click="updateProductCount(item.productId, item.quantity + 1)"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="td td-sum">
+                            <div class="td-inner">
+                                <em tabindex="0" class="J_ItemSum number">{{item.productTotalPrice}}</em>
+                            </div>
+                        </li>
+                        <li class="td td-op">
+                            <div class="td-inner">
+                                <a href="javascript:;" data-point-url="#" class="delete">
+                                    删除</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </tr>
+
+        <!--<div class="clear"></div>-->
+    </div>
+    <div class="clear"></div>
+
+    <div class="float-bar-wrapper">
+        <div id="J_SelectAll2" class="select-all J_SelectAll">
+            <div class="cart-checkbox">
+                <input v-model="allChecked" class="check-all check" id="J_SelectAllCbx2" name="select-all" value="true"
+                       type="checkbox">
+                <label for="J_SelectAllCbx2"></label>
+            </div>
+            <span>全选</span>
+        </div>
+        <div class="operations">
+            <a href="#" hidefocus="true" class="deleteAll">删除</a>
+        </div>
+        <div class="float-bar-right">
+            <div class="amount-sum">
+                <span class="txt">已选商品</span>
+                <em id="J_SelectedItemsCount">{{count}}</em><span class="txt">件</span>
+                <div class="arrow-box">
+                    <span class="selected-items-arrow"></span>
+                    <span class="arrow"></span>
+                </div>
+            </div>
+            <div class="price-sum">
+                <span class="txt">合计:</span>
+                <strong class="price">¥<em id="J_Total">{{totalPrice}}</em></strong>
+            </div>
+            <div class="btn-area">
+                <a href="pay.html" id="J_Go" class="submit-btn submit-btn-disabled" aria-label="请注意如果没有选择宝贝，将无法结算">
+                    <span>结&nbsp;算</span></a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-hd">
+            <p>
+                <a href="#">恒望科技</a>
+                <b>|</b>
+                <a href="#">商城首页</a>
+                <b>|</b>
+                <a href="#">支付宝</a>
+                <b>|</b>
+                <a href="#">物流</a>
+            </p>
+        </div>
+        <div class="footer-bd">
+            <p>
+                <a href="#">关于恒望</a>
+                <a href="#">合作伙伴</a>
+                <a href="#">联系我们</a>
+                <a href="#">网站地图</a>
+                <em>© 2015-2025 Hengwang.com 版权所有. 更多模板 <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a>
+                    - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></em>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var userInfo = new Vue({
+        el: '.vue-user-info',
+        data: {
+            id: -1,
+            username: '',
+            email: '',
+            phone: '',
+            question: '',
+        },
+        created: function () {
+            this.id = -1;
+            this.username = '';
+            this.email = '';
+            this.phone = '';
+            this.question = '';
+            user.getUser(this.getUserCallback);
+        },
+        methods: {
+            getUserCallback: function (result) {
+                if (result.status == 0) {
+                    this.id = result.data.id;
+                    this.username = result.data.username;
+                    this.email = result.data.email;
+                    this.phone = result.data.phone;
+                    this.question = result.data.question;
+                    shopCart.getCartCount();
+                    console.log(this.id);
+                } else {
+                    console.log(result);
+                }
+            },
+            loginOut: function () {
+                user.loginOut();
+                window.location.reload();
+            }
+        }
+    });
+
+    var shopCart = new Vue({
+        el: '.concent',
+        data: {
+            list: [],
+            imageHost: '',
+            checkedIds: [],
+            allChecked: true,
+            count: 0,
+            totalPrice: 0
+        },
+        created: function () {
+            cart.getCartList(this.getCartListCallback);
+        },
+        methods: {
+            getCartListCallback: function (result) {
+                console.log(result);
+                if (result.status == 0) {
+                    this.allChecked = result.data.allChecked;
+                    this.imageHost = result.data.imageHost;
+                    this.totalPrice = result.data.cartTotalPrice.toFixed(2);
+                    this.list = result.data.cartProductVoList;
+                    for (var i = 0; i < this.list.length; i++) {
+                        if (this.list[i].productChecked == 1) {
+                            this.checkedIds[i] = this.list[i].productId;
+                        }
+                    }
+                    this.getCartCount();
+                    return;
+                }
+                if (result.status == 10) {
+                    window.location.href = "login.html";
+                }
+            },
+            addToCart: function (productId, count) {
+                cart.addToCart(productId, count, this.addToCartCallback);
+            },
+            addToCartCallback: function (result) {
+                if (result.status == 0) {
+                    this.getCartCount();
+                    alert("添加成功");
+                } else {
+                    alert(result.msg);
+                }
+            },
+            getCartCount: function () {
+                cart.getCount(this.getCartCountCallback);
+            },
+            getCartCountCallback: function (result) {
+                if (result.status != 0) {
+                    console.log('获取购物车数量失败');
+                }
+                this.count = result.data;
+                $("#J_MiniCartNum").text(this.count);
+                console.log("this.count: " + this.count);
+            },
+            selectOrUnSelect: function (id) {
+                var checked = $('#' + id).is(':checked');
+                var id = id.substr(id.lastIndexOf('_') + 1);
+                console.log(id);
+                if (checked) {
+                    cart.select(id, this.getCartListCallback);
+                }
+                else {
+                    cart.unSelect(id, this.getCartListCallback);
+                }
+            },
+            updateProductCount: function (productId, count) {
+                if (count < 1) return;
+                cart.update(productId, count, this.getCartListCallback);
+            }
+        }
+    });
+    var searchBar = new Vue({
+        el: '.search-bar',
+        data: {
+            word: ''
+        },
+        methods: {
+            toSearch: function () {
+                sessionStorage.setItem("productId", undefined);
+                sessionStorage.setItem("productWord", this.word);
+                window.location.href = "search.html";
+            }
+        }
+    });
+</script>
+</body>
+
+</html>

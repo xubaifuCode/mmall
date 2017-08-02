@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+
+    <title>订单详情</title>
+
+    <link href="../AmazeUI-2.4.2/assets/css/admin.css" rel="stylesheet" type="text/css">
+    <link href="../AmazeUI-2.4.2/assets/css/amazeui.css" rel="stylesheet" type="text/css">
+
+    <link href="../css/personal.css" rel="stylesheet" type="text/css">
+    <link href="../css/orstyle.css" rel="stylesheet" type="text/css">
+
+    <script src="../AmazeUI-2.4.2/assets/js/jquery.min.js"></script>
+    <script src="../AmazeUI-2.4.2/assets/js/amazeui.js"></script>
+    <script type="text/javascript" src="../basic/js/jquery-1.7.min.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="../js/model.js"></script>
+
+
+</head>
+
+<body>
+<header>
+    <article>
+        <div class="mt-logo">
+            <!--顶部导航条 -->
+            <div class="am-container header vue-user-info">
+                <ul class="message-l">
+                    <div class="topMessage">
+                        <div v-if="id === -1" class="menu-hd">
+                            <a href="login.html" class="h">亲,请登录</a>
+                            <a href="register.html">注册</a>
+                        </div>
+                        <div v-else class="menu-hd">
+                            <a href="#" target="_top" class="h">欢迎你, {{ username }}</a>
+                            <a @click="loginOut" href="#" target="_top">退出</a>
+                        </div>
+                    </div>
+                </ul>
+                <ul class="message-r">
+                    <div class="topMessage my-shangcheng">
+                        <div class="menu-hd MyShangcheng"><a href="#" target="_top"><i
+                                class="am-icon-user am-icon-fw"></i>个人中心</a>
+                        </div>
+                    </div>
+                    <div class="topMessage mini-cart">
+                        <div class="menu-hd"><a id="mc-menu-hd" href="#" target="_top"><i
+                                class="am-icon-shopping-cart  am-icon-fw"></i><span><a
+                                href="shopcart.html">购物车</a></span><strong id="J_MiniCartNum"
+                                                                           class="h">0</strong></a>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+
+            <!--悬浮搜索框-->
+            <div class="nav white">
+                <a href="../home/home.html">
+                    <div class="logoBig">
+                        <li><img src="../images/logobig.png"/></li>
+                    </div>
+                </a>
+
+                <div class="search-bar pr">
+                    <a name="index_none_header_sysc" href="#"></a>
+                    <form action="">
+                        <input id="searchInput" v-model="word" name="product_name" type="text" placeholder="搜索"
+                               autocomplete="off">
+                        <div @click="toSearch()" id="ai-topsearch" class="am-btn">搜索</div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="clear"></div>
+        </div>
+        </div>
+    </article>
+</header>
+<div class="nav-table">
+    <div class="long-title"><span class="all-goods">全部分类</span></div>
+    <div class="nav-cont">
+        <ul>
+            <li class="index"><a href="../home/home.html">首页</a></li>
+            <li class="qc last"><a href="#">关于商城</a></li>
+        </ul>
+    </div>
+</div>
+<b class="line"></b>
+<div class="center">
+    <div class="col-main">
+        <div class="main-wrap">
+
+            <div class="user-orderinfo">
+
+                <!--标题 -->
+                <div class="am-cf am-padding">
+                    <div class="am-fl am-cf"><strong class="am-text-danger am-text-lg">订单详情</strong> /
+                        <small>Order&nbsp;details</small>
+                    </div>
+                </div>
+                <hr/>
+                <!--进度条-->
+                <div class="order-infoaside">
+                    <div class="order-addresslist">
+                        <div class="order-address">
+                            <div class="icon-add">
+                            </div>
+                            <p class="new-tit new-p-re">
+                                <span class="new-txt">{{shipping.receiverName}}</span>
+                                <span class="new-txt-rd2">{{shipping.receiverMobile}}</span>
+                            </p>
+                            <div class="new-mu_l2a new-p-re">
+                                <p class="new-mu_l2cw">
+                                    <span class="title">收货地址：</span>
+                                    <span class="province">{{shipping.receiverProvince}}</span>
+                                    <span class="city">{{shipping.receiverCity}}</span>
+                                    <span class="dist">{{shipping.receiverDistrict}}</span>
+                                    <span class="street">{{shipping.receiverAddress}}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-infomain">
+
+                    <div class="order-top">
+                        <div class="th th-item">
+                            <td class="td-inner">商品</td>
+                        </div>
+                        <div class="th th-price">
+                            <td class="td-inner">单价</td>
+                        </div>
+                        <div class="th th-number">
+                            <td class="td-inner">数量</td>
+                        </div>
+                        <div class="th th-amount">
+                            <td class="td-inner"></td>
+                        </div>
+                        <div class="th th-status">
+                            <td class="td-inner"></td>
+                        </div>
+                    </div>
+
+                    <div class="order-main">
+
+                        <div class="order-status3">
+                            <div class="order-title">
+                                <div class="dd-num">订单编号：<a href="javascript:;">{{orderNo}}</a></div>
+                                <span>成交时间：{{createTime}}</span>
+                                <!--    <em>店铺：小桔灯</em>-->
+                            </div>
+                            <div class="order-content">
+                                <div class="order-left">
+                                    <ul class="item-list" v-for="item in itemList">
+                                        <li class="td td-item">
+                                            <div class="item-pic">
+                                                <a href="#" class="J_MakePoint">
+                                                    <img src="../images/kouhong.jpg_80x80.jpg"
+                                                         class="itempic J_ItemImg">
+                                                </a>
+                                            </div>
+                                            <div class="item-info">
+                                                <div class="item-basic-info">
+                                                    <a href="#">
+                                                        <p>{{item.productName}}</p>
+                                                        <p class="info-little">颜色：默认
+                                                            <br/>包装：默认 </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="td td-price">
+                                            <div class="item-price">
+                                                {{item.currentUnitPrice.toFixed(2)}}
+                                            </div>
+                                        </li>
+                                        <li class="td td-number">
+                                            <div class="item-number">
+                                                <span>×</span>{{item.quantity}}
+                                            </div>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                                <div class="order-right">
+                                    <li class="td td-amount">
+                                        <div class="item-amount">
+                                            合计：{{payment.toFixed(2)}}
+                                        </div>
+                                    </li>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!--底部-->
+        <div class="footer">
+            <div class="footer-hd">
+                <p>
+                    <a href="#">恒望科技</a>
+                    <b>|</b>
+                    <a href="#">商城首页</a>
+                    <b>|</b>
+                    <a href="#">支付宝</a>
+                    <b>|</b>
+                    <a href="#">物流</a>
+                </p>
+            </div>
+            <div class="footer-bd">
+                <p>
+                    <a href="#">关于恒望</a>
+                    <a href="#">合作伙伴</a>
+                    <a href="#">联系我们</a>
+                    <a href="#">网站地图</a>
+                    <em>© 2015-2025 Hengwang.com 版权所有. 更多模板 <a href="http://www.cssmoban.com/" target="_blank"
+                                                               title="模板之家">模板之家</a> - Collect from <a
+                            href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></em>
+                </p>
+            </div>
+        </div>
+
+    </div>
+    <aside class="menu">
+        <ul>
+            <li class="person">
+                <a href="index.html">个人资料</a>
+            </li>
+            <li class="person active">
+                <a href="order.html">订单管理</a>
+            </li>
+
+            <li class="person">
+                <a href="resetpassword.html">密码修改</a>
+            </li>
+
+        </ul>
+    </aside>
+</div>
+<script type="text/javascript">
+    var userInfo = new Vue({
+        el: '.vue-user-info',
+        data: {
+            id: -1,
+            username: '',
+            email: '',
+            phone: '',
+            question: '',
+        },
+        created: function () {
+            this.id = -1;
+            this.username = '';
+            this.email = '';
+            this.phone = '';
+            this.question = '';
+            user.getUser(this.getUserCallback);
+        },
+        methods: {
+            getUserCallback: function (result) {
+                if (result.status == 0) {
+                    this.id = result.data.id;
+                    this.username = result.data.username;
+                    this.email = result.data.email;
+                    this.phone = result.data.phone;
+                    this.question = result.data.question;
+                    cart.getCount(this.getCountCallback);
+                } else {
+                    console.log(result);
+                    alert("未登录，请登录");
+                    window.location.href = "../home/login.html";
+                }
+            },
+            loginOut: function () {
+                user.loginOut();
+                window.location.reload();
+            },
+            getCountCallback: function (result) {
+                $("#J_MiniCartNum").text(result.data);
+            }
+        }
+    });
+
+    var userOrderInfo = new Vue({
+        el: '.user-orderinfo',
+        data: {
+            payment: '',
+            orderNo: 0,
+            createTime: '',
+            shipping: '',
+            itemList: []
+        },
+        created: function () {
+            var orderNo = sessionStorage.getItem("detailOrderNo");
+            order.getDetail(orderNo, this.init);
+        },
+        methods: {
+            init: function (result) {
+                if (result.status != 0) {
+                    alert('订单详情获取失败,正在跳回订单页...');
+                    window.location.href = "order.html";
+                    return;
+                }
+
+                var obj = result.data;
+                console.log("从服务器获取的对象")
+                console.log(obj);
+
+                this.payment = obj.payment;
+                console.log(obj.shippingVo);
+                console.log(obj.payment);
+                this.orderNo = obj.orderNo;
+                this.createTime = obj.createTime;
+                this.shipping = obj.shippingVo;
+                this.itemList = obj.orderItemVoList;
+            }
+        }
+    });
+    var searchBar = new Vue({
+        el: '.search-bar',
+        data: {
+            word: ''
+        },
+        methods: {
+            toSearch: function () {
+                sessionStorage.setItem("productId", undefined);
+                sessionStorage.setItem("productWord", this.word);
+                window.location.href = "../home/search.html";
+            }
+        }
+    });
+</script>
+</body>
+
+</html>

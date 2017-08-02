@@ -71,6 +71,13 @@ public class FtpUtil {
         this.ftpClient = ftpClient;
     }
 
+    /**
+     * 上传fileList指定的文件到ftp服务器
+     *
+     * @param fileList 文件路径列表
+     * @return
+     * @throws IOException
+     */
     public static boolean uploadFile(List<File> fileList) throws IOException {
         FtpUtil ftpUtil = new FtpUtil(ftpIp, 21, ftpUser, ftpPass);
         logger.info("开始连接ftp服务器");

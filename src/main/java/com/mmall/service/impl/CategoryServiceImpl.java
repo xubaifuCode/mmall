@@ -1,6 +1,7 @@
 package com.mmall.service.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mmall.common.ServerResponse;
 import com.mmall.dao.CategoryMapper;
@@ -13,12 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by alex on 17-5-18.
- */
 @Service("iCategoryService")
 public class CategoryServiceImpl implements ICategoryService {
 
@@ -84,6 +83,25 @@ public class CategoryServiceImpl implements ICategoryService {
             }
         }
         return ServerResponse.createBySuccess(categoryIdList);
+    }
+
+    /**
+     * 递归查询本节点的id以及孩子节点的id和名字
+     *
+     * @param categoryId
+     * @return
+     */
+    public ServerResponse<HashMap<String, Integer>> selectCategoryAndName(Integer categoryId) {
+        Set<Category> categorySet = Sets.newHashSet();
+        findChildCategory(categorySet, categoryId);
+
+        HashMap<String, Integer> categoryMap = Maps.newHashMap();
+        if (categoryId != null) {
+            for (Category categoryItem : categorySet) {
+                categoryMap.put(categoryItem.getName(), categoryItem.getId());
+            }
+        }
+        return ServerResponse.createBySuccess(categoryMap);
     }
 
     private Set<Category> findChildCategory(Set<Category> categorySet, Integer categoryId) {

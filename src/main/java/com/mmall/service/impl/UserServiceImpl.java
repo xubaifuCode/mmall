@@ -39,6 +39,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         user.setPassword(StringUtils.EMPTY);
+        user.setAnswer(StringUtils.EMPTY);
         return ServerResponse.createBySuccess("登录成功", user);
     }
 
@@ -182,6 +183,8 @@ public class UserServiceImpl implements IUserService {
             return ServerResponse.createByErrorMessage("找不到当前用户");
         }
         user.setPassword(org.apache.commons.lang3.StringUtils.EMPTY);
+        user.setAnswer(org.apache.commons.lang3.StringUtils.EMPTY);
+        //user.setQuestion(org.apache.commons.lang3.StringUtils.EMPTY);
         return ServerResponse.createBySuccess(user);
     }
 

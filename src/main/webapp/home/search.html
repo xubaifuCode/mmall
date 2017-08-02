@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>搜索页面</title>
+
+    <link href="../AmazeUI-2.4.2/assets/css/amazeui.css" rel="stylesheet" type="text/css"/>
+    <link href="../AmazeUI-2.4.2/assets/css/admin.css" rel="stylesheet" type="text/css"/>
+
+    <link href="../basic/css/demo.css" rel="stylesheet" type="text/css"/>
+
+    <link href="../css/seastyle.css" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript" src="../basic/js/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="../js/script.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="../js/model.js"></script>
+</head>
+
+<body>
+
+<!--顶部导航条 -->
+<div class="am-container header vue-user-info">
+    <ul class="message-l">
+        <div class="topMessage">
+            <div v-if="id === -1" class="menu-hd">
+                <a href="login.html" class="h">亲,请登录</a>
+                <a href="register.html">注册</a>
+            </div>
+            <div v-else class="menu-hd">
+                <a href="../person/index.html" target="_top" class="h">欢迎你, {{ username }}</a>
+                <a @click="loginOut" href="#" target="_top">退出</a>
+            </div>
+        </div>
+    </ul>
+    <ul class="message-r">
+        <div class="topMessage my-shangcheng">
+            <div class="menu-hd MyShangcheng"><a href="../person/index.html" target="_top"><i
+                    class="am-icon-user am-icon-fw"></i>个人中心</a>
+            </div>
+        </div>
+        <div class="topMessage mini-cart">
+            <div class="menu-hd"><a id="mc-menu-hd" href="#" target="_top"><i
+                    class="am-icon-shopping-cart  am-icon-fw"></i><span><a
+                    href="shopcart.html">购物车</a></span><strong id="J_MiniCartNum"
+                                                               class="h">0</strong></a>
+            </div>
+        </div>
+    </ul>
+</div>
+
+<!--悬浮搜索框-->
+<div class="nav white">
+    <a href="home.html">
+        <div class="logo"><img src="../images/logo.png"/></div>
+        <div class="logoBig">
+            <li><img src="../images/logobig.png"/></li>
+        </div>
+    </a>
+
+    <div class="search-bar pr">
+        <a name="index_none_header_sysc" href="#"></a>
+        <form action="">
+            <input id="searchInput" v-model="word" name="product_name" type="text" placeholder="搜索"
+                   autocomplete="off">
+            <div @click="toSearch()" id="ai-topsearch" class="am-btn">搜索</div>
+        </form>
+    </div>
+</div>
+
+<div class="clear"></div>
+<b class="line"></b>
+<div class="search">
+    <div class="search-list">
+        <div class="nav-table">
+            <div class="long-title"><span class="all-goods">全部分类</span></div>
+            <div class="nav-cont">
+                <ul>
+                    <li class="index"><a href="home.html">首页</a></li>
+                    <li class="qc last"><a href="#">关于商城</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="am-g am-g-fixed">
+            <div class="am-u-sm-12 am-u-md-12">
+                <div class="theme-popover">
+                    <ul class="select">
+                        <p class="title font-normal">
+                            <span class="fl"></span>
+                            <span class="total fl">搜索到<strong class="num">0</strong>件相关商品</span>
+                        </p>
+                        <div class="clear"></div>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div id="search-content">
+                    <div class="search-content" style="width: 100%">
+                        <div class="sort">
+                            <li class="first"><a title="综合">综合排序</a></li>
+                            <li><a title="价格">价格优先</a></li>
+                        </div>
+                        <div class="clear"></div>
+
+                        <ul class="am-avg-sm-2 am-avg-md-3 am-avg-lg-4 boxes">
+                            <li v-for="productItem in productList" @click="toProductDetail(productItem.id)">
+                                <div class="i-pic limit">
+                                    <img v-bind:src="productItem.imageHost + productItem.mainImage"/>
+                                    <p class="title fl">{{productItem.name}}</p>
+                                    <p class="price fl">
+                                        <b>¥</b>
+                                        <strong>{{productItem.price.toFixed(2)}}</strong>
+                                    </p>
+                                    <p @click="addToCart(productItem.id)" class="number fl">
+                                        <span class="am-btn am-btn-danger">加入购物车</span>
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clear"></div>
+                    <!--分页 -->
+                    <ul class="am-pagination am-pagination-right">
+                        <li @click="pre" v-bind:class="{'am-disabled':!hasPreviousPage}">
+                            <a>shang&laquo;</a>
+                        </li>
+                        <li v-for="pageItem in navigatepageNums" v-bind:class="{'am-active':(pageItem == pageNum)}">
+                            <a href="#">{{pageItem}}</a>
+                        </li>
+                        <li @click="next" v-bind:class="{'am-disabled':!hasNextPage}">
+                            <a>xia&raquo;</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <div class="footer">
+            <div class="footer-hd">
+                <p>
+                    <a href="#">恒望科技</a>
+                    <b>|</b>
+                    <a href="#">商城首页</a>
+                    <b>|</b>
+                    <a href="#">支付宝</a>
+                    <b>|</b>
+                    <a href="#">物流</a>
+                </p>
+            </div>
+            <div class="footer-bd">
+                <p>
+                    <a href="#">关于恒望</a>
+                    <a href="#">合作伙伴</a>
+                    <a href="#">联系我们</a>
+                    <a href="#">网站地图</a>
+                    <em>© 2015-2025 Hengwang.com 版权所有. 更多模板 <a href="http://www.cssmoban.com/" target="_blank"
+                                                               title="模板之家">模板之家</a> - Collect from <a
+                            href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></em>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!--菜单 -->
+<div class='tip'>
+    <div id="sidebar">
+
+        <div id="wrap">
+            <div id="prof" class="item ">
+            </div>
+            <div id="shopCart" class="item " onclick="window.location.href='shopcart.html'">
+                <a href="">
+                    <span class="message "></span>
+                </a>
+                <p>
+                    购物车
+                </p>
+                <p class="cart_num ">{{count}}</p>
+            </div>
+
+            <div class="quick_toggle ">
+                <!--二维码 -->
+                <li class="qtitem ">
+                    <a href="#none "><span class="mpbtn_qrcode "></span></a>
+                    <div class="mp_qrcode " style="display:none; "><img src="../images/weixin_code_145.png "/><i
+                            class="icon_arrow_white "></i></div>
+                </li>
+                <li class="qtitem ">
+                    <a href="#top " class="return_top "><span class="top "></span></a>
+                </li>
+            </div>
+
+            <!--回到顶部 -->
+            <div id="quick_links_pop " class="quick_links_pop hide "></div>
+
+        </div>
+
+    </div>
+</div>
+<script>
+    window.jQuery || document.write('<script src="basic/js/jquery-1.9.min.js"><\/script>');
+</script>
+<script type="text/javascript" src="../basic/js/quick_links.js"></script>
+
+<div class="theme-popover-mask"></div>
+<script type="text/javascript">
+    var userInfo = new Vue({
+        el: '.vue-user-info',
+        data: {
+            id: -1,
+            username: '',
+            email: '',
+            phone: '',
+            question: '',
+        },
+        created: function () {
+            this.id = -1;
+            this.username = '';
+            this.email = '';
+            this.phone = '';
+            this.question = '';
+            user.getUser(this.getUserCallback);
+        },
+        methods: {
+            getUserCallback: function (result) {
+                if (result.status == 0) {
+                    this.id = result.data.id;
+                    this.username = result.data.username;
+                    this.email = result.data.email;
+                    this.phone = result.data.phone;
+                    this.question = result.data.question;
+                    shopCart.getCartCount();
+                    console.log(this.id);
+                } else {
+                    console.log(result);
+                }
+            },
+            loginOut: function () {
+                user.loginOut();
+                window.location.reload();
+            }
+        }
+    });
+    var shopCart = new Vue({
+        el: '#sidebar',
+        data: {
+            count: 0
+        },
+        methods: {
+            addToCart: function (productId, count) {
+                cart.addToCart(productId, count, this.addToCartCallback);
+            },
+            addToCartCallback: function (result) {
+                if (result.status == 0) {
+                    this.getCartCount();
+                    alert("添加成功");
+                } else {
+                    alert(result.msg);
+                }
+            },
+            getCartCount: function () {
+                cart.getCount(this.getCartCountCallback);
+            },
+            getCartCountCallback: function (result) {
+                if (result.status != 0) {
+                    console.log('获取购物车数量失败');
+                }
+                this.count = result.data;
+                $("#J_MiniCartNum").text(this.count);
+                console.log("this.count: " + this.count);
+            }
+        }
+    });
+    var searchContent = new Vue({
+        el: '#search-content',
+        data: {
+            searchId: '',
+            searchWord: '',
+            productList: [],
+            hasPreviousPage: false,
+            hasNextPage: true,
+            prePage: 0,
+            nextPage: 2,
+            pageNum: 1,
+            navigatepageNums: []
+        },
+        created: function () {
+            this.searchId = sessionStorage.getItem("productId");
+            this.searchWord = sessionStorage.getItem("productWord");
+            console.log(this.searchId + " " + this.searchWord);
+            this.getProduct(this.searchId, this.searchWord, 1);
+        },
+        methods: {
+            toProductDetail: function (productId) {
+                console.log('获取产品id: ' + productId);
+                sessionStorage.setItem("productId", productId);
+                window.location.href = "introduction.html";
+            },
+            addToCart: function (productId) {
+                shopCart.addToCart(productId, 1);
+            },
+            getProduct: function (searchId, searchWord, pageNum) {
+                if (searchId != "undefined") {
+                    console.log("id未定义");
+                    product.getProductList(null, searchId, pageNum, 16, null, null, this.getProductCallback);
+                } else if (typeof searchWord != "undefined") {
+                    console.log("关键词定义");
+                    product.getProductList(searchWord, null, pageNum, 16, null, null, this.getProductCallback);
+                } else {
+                    alert("出错了～");
+                    window.location.href = "home.html";
+                }
+            },
+            getProductCallback: function (result) {
+                this.productList = result.data.list;
+                this.hasPreviousPage = result.data.hasPreviousPage;
+                this.hasNextPage = result.data.hasNextPage;
+                this.prePage = result.data.prePage;
+                this.nextPage = result.data.nextPage;
+                this.pageNum = result.data.pageNum;
+                this.navigatepageNums = result.data.navigatepageNums;
+                $(".num").text(this.productList.length);
+            },
+            pre: function () {
+                if (this.hasPreviousPage) {
+                    this.getProduct(this.searchId, this.searchWord, this.prePage);
+                }
+            },
+            next: function () {
+                if (this.hasNextPage) {
+                    this.getProduct(this.searchId, this.searchWord, this.nextPage);
+                }
+            }
+        }
+    });
+    var searchBar = new Vue({
+        el: '.search-bar',
+        data: {
+            word: ''
+        },
+        methods: {
+            toSearch: function () {
+                sessionStorage.setItem("productId", undefined);
+                sessionStorage.setItem("productWord", this.word);
+                window.location.href = "search.html";
+            }
+        }
+    });
+</script>
+</body>
+
+</html>

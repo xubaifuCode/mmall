@@ -15,6 +15,10 @@ public class ServerResponse<T> implements Serializable {
     private String msg;
     private T data;
 
+    public static <T> void fuck(T shit) {
+        System.out.println(shit);
+    }
+
     private ServerResponse(int status) {
         this.status = status;
     }

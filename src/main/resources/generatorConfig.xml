@@ -24,18 +24,21 @@
             <property name="forceBigDecimals" value="false" />
         </javaTypeResolver>
 
-        <javaModelGenerator targetPackage="com.mmall.pojo" targetProject="/home/alex/IdeaProjects/mmall/src/main/java">
+        <javaModelGenerator targetPackage="com.mmall.pojo"
+                            targetProject="/home/alex/IdeaProjects/mmall/src/main/java">
             <property name="enableSubPackages" value="true" />
             <property name="trimStrings" value="true" />
             <property name="constructorBased" value="true"/>
             <property name="immutable" value="false"/>
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="mappers"  targetProject="/home/alex/IdeaProjects/mmall/src/main/resources">
+        <sqlMapGenerator targetPackage="mappers"
+                         targetProject="/home/alex/IdeaProjects/mmall/src/main/resources">
             <property name="enableSubPackages" value="true" />
         </sqlMapGenerator>
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.mmall.dao"  targetProject="/home/alex/IdeaProjects/mmall/src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.mmall.dao"
+                             targetProject="/home/alex/IdeaProjects/mmall/src/main/java">
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
         

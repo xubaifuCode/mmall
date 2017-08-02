@@ -42,6 +42,7 @@ public class CartServiceImpl implements ICartService {
         if (productId == null || count == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
+        //TODO 如果该用户被恶意存入不存在的产品id，会造成该用户检索失败，除非删除该商品id所在的相关数据
         Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
         if (cart == null) {
             cart = new Cart();
@@ -49,7 +50,6 @@ public class CartServiceImpl implements ICartService {
             cart.setQuantity(count);
             cart.setUserId(userId);
             cart.setChecked(Const.Cart.CHECKED);
-
             cartMapper.insert(cart);
         } else {
             //这个产品已经在购物车里

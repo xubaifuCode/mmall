@@ -13,6 +13,7 @@
 
 
     <mvc:annotation-driven>
+        <!--序列化-->
         <mvc:message-converters>
             <bean class="org.springframework.http.converter.StringHttpMessageConverter">
                 <property name="supportedMediaTypes">

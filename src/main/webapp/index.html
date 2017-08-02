@@ -2,17 +2,38 @@
 <head>
     <meta charset="UTF-8">
     <title>图片上传</title>
+    <script src="admin/assets/js/jquery.min.js"></script>
+    <script src="js/jquery.form.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/model.js"></script>
 </head>
 <body>
 spring mvc上传文件
-<form name="form1" action="/manage/product/upload.do" method="post" enctype="multipart/form-data">
+<form id="test1" enctype="multipart/form-data">
+    <input @change="uploadMain" type="file" id="upload_pic_main" name="upload_file"/>
+    <input type="submit" value="上传"/>
+</form>
+
+<form id="form1" name="form1" action="/manage/product/richtext_img_upload.do" method="post"
+      enctype="multipart/form-data">
     <input type="file" name="upload_file"/>
     <input type="submit" value="上传"/>
 </form>
 
-<form name="form1" action="/manage/product/richtext_img_upload.do" method="post" enctype="multipart/form-data">
-    <input type="file" name="upload_file"/>
-    <input type="submit" value="上传"/>
-</form>
+<script>
+    var test1 = new Vue({
+        el: '#test1',
+        methods: {
+            uploadMain: function () {
+                var formData = new FormData();
+                formData.append("upload_file", $('#upload_pic_main')[0].files[0]);
+                fileUpload.upload(formData, this.uploadCallback)
+            },
+            uploadCallback: function (result) {
+                console.log(result);
+            }
+        }
+    });
+</script>
 </body>
 </html>
